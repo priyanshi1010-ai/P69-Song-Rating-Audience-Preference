@@ -1,0 +1,82 @@
+import unittest
+import pandas as pd
+
+from analysis import get_clean_data
+from data_manager import load_ratings
+
+
+class TestSongRatingProject(unittest.TestCase):
+
+    def test_data_file_exists(self):
+
+        df = load_ratings()
+
+        self.assertIsInstance(
+            df,
+            pd.DataFrame
+        )
+
+
+    def test_required_columns(self):
+
+        df = load_ratings()
+
+        required_columns = [
+            "ID",
+            "Member",
+            "Song",
+            "Artist",
+            "Genre",
+            "Playlist",
+            "Rating"
+        ]
+
+        for column in required_columns:
+
+            self.assertIn(
+                column,
+                df.columns
+            )
+
+
+    def test_rating_range(self):
+
+        df = get_clean_data()
+
+        if not df.empty:
+
+            self.assertTrue(
+                (df["Rating"] >= 1).all()
+            )
+
+            self.assertTrue(
+                (df["Rating"] <= 5).all()
+            )
+
+
+    def test_rating_is_numeric(self):
+
+        df = get_clean_data()
+
+        if not df.empty:
+
+            self.assertTrue(
+                pd.api.types.is_numeric_dtype(
+                    df["Rating"]
+                )
+            )
+
+
+    def test_data_not_empty(self):
+
+        df = load_ratings()
+
+        self.assertGreaterEqual(
+            len(df),
+            0
+        )
+
+
+if __name__ == "__main__":
+
+    unittest.main()
